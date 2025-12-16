@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Wplan Auto</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        #menu-bar {
+            padding: 5px;
+            background-color: #f2f2f7;
+            border-bottom: 1px solid #d1d1d6;
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007aff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        #content-view {
+            flex-grow: 1;
+            background-color: white; /* Фон на случай, если view не загрузится */
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-bar">
+        <button id="settings-btn">Настройки</button>
+        <button id="logout-btn">Выход</button>
+    </div>
+    <div id="content-view"></div>
+
+    <script>
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            window.electronAPI.openSettings();
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            window.electronAPI.logout();
+        });
+    </script>
+</body>
+</html>
