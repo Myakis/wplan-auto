@@ -4,20 +4,47 @@
     <meta charset="UTF-8">
     <title>Настройки</title>
     <style>
+        :root {
+            --bg-color: #f2f2f7;
+            --text-color: #1c1c1e;
+            --container-bg-color: #fff;
+            --border-color: #c7c7cc;
+            --button-bg-color: #007aff;
+            --button-hover-bg-color: #005bb5;
+            --h1-color: #1c1c1e;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: rgb(33, 44, 66);
+                --text-color: #f2f2f7;
+                --container-bg-color: rgb(52, 64, 90);
+                --border-color: #636366;
+                --button-bg-color: rgb(0, 76, 255);
+                --button-hover-bg-color: rgb(0, 50, 200);
+                --h1-color: #f2f2f7;
+            }
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f2f2f7;
-            color: #1c1c1e;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
         .container {
             max-width: 400px;
             margin: 0 auto;
+            background-color: var(--container-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
         h1 {
             font-size: 20px;
             margin-bottom: 20px;
+            color: var(--h1-color);
         }
         .form-group {
             margin-bottom: 15px;
@@ -35,23 +62,28 @@
         .time-input-group input {
             width: 60px;
             padding: 10px;
-            border: 1px solid #c7c7cc;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             box-sizing: border-box;
             text-align: center;
+            background-color: var(--container-bg-color);
+            color: var(--text-color);
         }
         button {
             padding: 10px 15px;
             border: none;
             border-radius: 8px;
-            background-color: #007aff;
+            background-color: var(--button-bg-color);
             color: white;
             font-size: 16px;
             cursor: pointer;
         }
+        button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
         .status {
             margin-top: 15px;
-            color: green;
+            color: green; /* Consider changing this for dark theme if needed */
         }
     </style>
 </head>
@@ -87,75 +119,89 @@
     </div>
 
     <script>
-        const autoStartCheckbox = document.getElementById('auto-start-enabled');
-        const startHourInput = document.getElementById('start-hour');
-        const startMinuteInput = document.getElementById('start-minute');
-        const endHourInput = document.getElementById('end-hour');
-        const endMinuteInput = document.getElementById('end-minute');
-        const saveBtn = document.getElementById('save-btn');
-        const statusEl = document.getElementById('status');
+        document.addEventListener('DOMContentLoaded', () => {
+            const autoStartCheckbox = document.getElementById('auto-start-enabled');
+            const startHourInput = document.getElementById('start-hour');
+            const startMinuteInput = document.getElementById('start-minute');
+            const endHourInput = document.getElementById('end-hour');
+            const endMinuteInput = document.getElementById('end-minute');
+            const saveBtn = document.getElementById('save-btn');
+            const statusEl = document.getElementById('status');
 
-        // Запрашиваем и отображаем текущие настройки при загрузке
-        window.electronAPI.getSettings().then(settings => {
-            startHourInput.value = settings.startHour ?? 9;
-            startMinuteInput.value = (settings.startMinute ?? 0).toString().padStart(2, '0');
-            endHourInput.value = settings.endHour ?? 18;
-            endMinuteInput.value = (settings.endMinute ?? 0).toString().padStart(2, '0');
-            autoStartCheckbox.checked = settings.autoStartEnabled ?? true;
-        });
+            // Запрашиваем и отображаем текущие настройки при загрузке
+            window.electronAPI.getSettings().then(settings => {
+                startHourInput.value = settings.startHour ?? 9;
+                startMinuteInput.value = (settings.startMinute ?? 0).toString().padStart(2, '0');
+                endHourInput.value = settings.endHour ?? 18;
+                endMinuteInput.value = (settings.endMinute ?? 0).toString().padStart(2, '0');
+                autoStartCheckbox.checked = settings.autoStartEnabled ?? true;
+            });
 
-        saveBtn.addEventListener('click', () => {
-            const settings = {
-                startHour: parseInt(startHourInput.value, 10),
-                startMinute: parseInt(startMinuteInput.value, 10),
-                endHour: parseInt(endHourInput.value, 10),
-                endMinute: parseInt(endMinuteInput.value, 10),
-                autoStartEnabled: autoStartCheckbox.checked
-            };
-            window.electronAPI.saveSettings(settings);
-            statusEl.textContent = 'Сохранено!';
-            setTimeout(() => statusEl.textContent = '', 2000);
-        });
+            saveBtn.addEventListener('click', () => {
+                const settings = {
+                    startHour: parseInt(startHourInput.value, 10),
+                    startMinute: parseInt(startMinuteInput.value, 10),
+                    endHour: parseInt(endHourInput.value, 10),
+                    endMinute: parseInt(endMinuteInput.value, 10),
+                    autoStartEnabled: autoStartCheckbox.checked
+                };
+                window.electronAPI.saveSettings(settings);
+                statusEl.textContent = 'Сохранено!';
+                setTimeout(() => statusEl.textContent = '', 2000);
+            });
 
-        const timeEl = document.getElementById('current-time');
-        const workStatusEl = document.getElementById('work-status');
+            const timeEl = document.getElementById('current-time');
+            const workStatusEl = document.getElementById('work-status');
 
-        async function updateTimers() {
-            const now = new Date();
-            timeEl.textContent = now.toLocaleTimeString();
+            async function updateTimers() {
+                const now = new Date();
+                timeEl.textContent = now.toLocaleTimeString();
 
-            try {
-                const buttonState = await window.electronAPI.getButtonState();
-                const settings = await window.electronAPI.getSettings();
-                const endHour = settings.endHour ?? 18;
-                const endMinute = settings.endMinute ?? 0;
+                try {
+                    const buttonState = await window.electronAPI.getButtonState();
+                    const settings = await window.electronAPI.getSettings();
+                    const endHour = settings.endHour ?? 18;
+                    const endMinute = settings.endMinute ?? 0;
 
-                if (buttonState && buttonState.includes('Завершить')) {
-                    const endTime = new Date();
-                    endTime.setHours(endHour, endMinute, 0, 0);
+                    if (buttonState && buttonState.includes('Завершить')) {
+                        const endTime = new Date();
+                        endTime.setHours(endHour, endMinute, 0, 0);
 
-                    if (now < endTime) {
-                        const diff = endTime - now;
-                        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-                        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                        const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-                        workStatusEl.textContent = `Осталось: ${hours}:${minutes}:${seconds}`;
+                        if (now < endTime) {
+                            const diff = endTime - now;
+                            const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                            const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                            workStatusEl.textContent = `Осталось: ${hours}:${minutes}:${seconds}`;
+                        } else {
+                            workStatusEl.textContent = 'Рабочий день завершен.';
+                        }
+                    } else if (buttonState && buttonState.includes('Начать')) {
+                        workStatusEl.textContent = 'Рабочий день еще не начат.';
                     } else {
-                        workStatusEl.textContent = 'Рабочий день завершен.';
+                        workStatusEl.textContent = 'Статус рабочего дня неизвестен.';
                     }
-                } else if (buttonState && buttonState.includes('Начать')) {
-                    workStatusEl.textContent = 'Рабочий день еще не начат.';
-                } else {
-                    workStatusEl.textContent = 'Статус рабочего дня неизвестен.';
+                } catch (error) {
+                    console.error('Ошибка при получении статуса:', error);
+                    workStatusEl.textContent = 'Не удалось загрузить статус.';
                 }
-            } catch (error) {
-                console.error('Ошибка при получении статуса:', error);
-                workStatusEl.textContent = 'Не удалось загрузить статус.';
             }
-        }
 
-        setInterval(updateTimers, 1000);
-        updateTimers();
+            setInterval(updateTimers, 1000);
+            updateTimers();
+
+            // Apply theme based on system preference
+            const applySystemTheme = () => {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            };
+
+            applySystemTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+        });
     </script>
 </body>
 </html>
