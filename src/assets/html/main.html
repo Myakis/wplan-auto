@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Wplan Auto</title>
@@ -22,7 +23,8 @@
             }
         }
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -33,6 +35,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
         }
+
         #menu-bar {
             padding: 5px;
             background-color: var(--bg-color);
@@ -42,6 +45,7 @@
             flex-shrink: 0;
             justify-content: flex-end;
         }
+
         button {
             padding: 5px 10px;
             border: none;
@@ -50,19 +54,37 @@
             color: white;
             font-size: 14px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
+
         button:hover {
             background-color: var(--button-hover-bg-color);
         }
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
         #content-view {
             flex-grow: 1;
-            background-color: var(--bg-color); /* Фон на случай, если view не загрузится */
+            background-color: var(--bg-color);
+            /* Фон на случай, если view не загрузится */
         }
     </style>
 </head>
+
 <body>
     <div id="menu-bar">
         <button id="settings-btn">Настройки</button>
+        <button id="reload-btn">
+            Обновить страницу
+        </button>
         <button id="logout-btn">Выход</button>
     </div>
     <div id="content-view"></div>
@@ -70,6 +92,9 @@
     <script>
         document.getElementById('settings-btn').addEventListener('click', () => {
             window.electronAPI.openSettings();
+        });
+        document.getElementById('reload-btn').addEventListener('click', () => {
+            window.electronAPI.reloadWplan();
         });
         document.getElementById('logout-btn').addEventListener('click', () => {
             window.electronAPI.logout();
@@ -88,4 +113,5 @@
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
     </script>
 </body>
+
 </html>

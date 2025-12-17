@@ -68,6 +68,17 @@ function initializeIpcHandlers(store, Notification) {
     createLoginWindow();
   });
 
+  ipcMain.on('reload-wplan', () => {
+    console.log('Пользователь нажал "Перезагрузить"');
+    const mainWindow = getMainWindow();
+    const view = mainWindow ? mainWindow.getBrowserView() : null;
+    if (view && !view.webContents.isDestroyed()) {
+      view.webContents.reload();
+    } else {
+      console.log('reload-wplan: BrowserView не доступен, перезагрузка отменена.');
+    }
+  });
+
   ipcMain.handle('type-in-debugger', async (event, text) => {
     const mainWindow = getMainWindow();
     const view = mainWindow.getBrowserView();

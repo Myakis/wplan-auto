@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   typeInDebugger: (text) => ipcRenderer.invoke('type-in-debugger', text),
   openSettings: () => ipcRenderer.send('open-settings'),
   logout: () => ipcRenderer.send('logout'),
+  reloadWplan: () => ipcRenderer.send('reload-wplan'),
 });
