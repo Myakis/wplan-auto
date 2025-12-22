@@ -1,3 +1,5 @@
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp();
 const { app, BrowserWindow, nativeImage, Notification } = require('electron');
 const path = require('path');
 const Store = require('electron-store').default;
