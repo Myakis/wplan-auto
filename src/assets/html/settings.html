@@ -90,6 +90,7 @@
 <body>
     <div class="container">
         <h1>Настройки</h1>
+        <p>Статус разрешений на уведомления: <span id="notification-permission-status"></span></p>
         <p>Текущее время: <span id="current-time"></span></p>
         <p id="work-status"></p>
         <div class="form-group">
@@ -143,6 +144,17 @@
             const statusEl = document.getElementById('status');
 
             // Запрашиваем и отображаем текущие настройки при загрузке
+            window.electronAPI.getNotificationPermissionStatus().then(isSupported => {
+                const statusEl = document.getElementById('notification-permission-status');
+                if (isSupported) {
+                    statusEl.textContent = 'Разрешены';
+                    statusEl.style.color = 'green';
+                } else {
+                    statusEl.textContent = 'Отклонены или не поддерживаются';
+                    statusEl.style.color = 'red';
+                }
+            });
+
             window.electronAPI.getSettings().then(settings => {
                 startHourInput.value = settings.startHour ?? 9;
                 startMinuteInput.value = (settings.startMinute ?? 0).toString().padStart(2, '0');

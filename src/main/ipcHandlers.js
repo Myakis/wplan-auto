@@ -108,6 +108,10 @@ function initializeIpcHandlers(store, Notification) {
     }
     return false;
   });
+
+  ipcMain.handle('get-notification-permission-status', () => {
+    return Notification.isSupported();
+  });
 }
 
 module.exports = { initializeIpcHandlers };
