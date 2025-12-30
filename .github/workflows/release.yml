@@ -31,6 +31,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
+            out/**/RELEASES
+            out/**/*.nupkg
             out/**/*.exe
             out/**/*.zip
           prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-rc') }}
